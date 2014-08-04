@@ -30,9 +30,12 @@ var Waterfall = (function(){
 		},
 		last: function(res){
 			return false;
+		},
+		noMore: function(){
+
 		}
 	};
-	var pageIndex = 0, waterWidth, columns, waters, imgWidth, wrapper, minColumn = 0, noMore = false, fixed, wrapperWidth;
+	var pageIndex = 0, loading = false, waterWidth, columns, waters, imgWidth, wrapper, minColumn = 0, noMore = false, fixed, wrapperWidth;
 	var log = (console && console.log) ? console.log : function(){};
 
 	function calculateColumnsHeight() {
@@ -88,10 +91,24 @@ var Waterfall = (function(){
 		});
 	};
 
+	function loadStart(){
+		loading = true;
+	};
+
+	function loadEnd(){
+		loading = false;
+	};
+
+	function loadComplete(res){
+		options.pageLoaded(res);
+		loadEnd();
+	};
+
 	function callbackAjax(res){
 		var thisOptions = options;
 		var thisRenderWater = renderWater;
 		var thisPushWater = pushWater;
+		var thisLoadComplete = loadComplete;
 		var pageData = options.parse(res);
 		var pageCount = pageData.length;
 		var item, url, img, doneFunc;
@@ -102,12 +119,7 @@ var Waterfall = (function(){
 			return;
 		}
 
-		doneFunc = function(item){
-			done++;
-			if(done === pageCount){
-				thisOptions.pageLoaded(res);
-			}
-		}
+
 
 		for(var i = 0; i < pageCount; i++){
 			item = pageData[i];
@@ -121,16 +133,17 @@ var Waterfall = (function(){
 
 			img.src = url;
 			img.onload=function(){
-			  thisRenderWater(item, this.width, this.height);
-			  thisPushWater(item, this.width, this.height);
-			  doneFunc();
+				thisRenderWater(item, this.width, this.height);
+				thisPushWater(item, this.width, this.height);
+				done++;
+				(done === pageCount) && thisLoadComplete(res);	
 			};
 			img.onerror=function(){
-			  doneFunc();
+			  	done++;
+				(done === pageCount) && thisLoadComplete(res);	
 			};
 		};
 
-		pageLoaded(res);
 	};
 
 	function resetColumns(columnCount){
@@ -155,6 +168,7 @@ var Waterfall = (function(){
 		waterWidth = (wrapperWidth - ((options.cols + 1) * options.margin)) / cols;
 		imgWidth = waterWidth - options.offsetH;
 		resetColumns(cols);
+		minColumn = 0;
 		options.cols = cols;
 
 		waterCount = waters.length;
@@ -166,13 +180,41 @@ var Waterfall = (function(){
 		}
 	};
 
-	function load(){
+	function ajaxParams(){
+		options.ajaxData[pageIndexName] = pageIndex;
+		return options.ajaxData;
+	};
 
+	function load(){
+		if(loading){
+			log('Another request of waterfall is processing...');
+			return false;
+		}
+		if(noMore){
+			log('no more images...');
+			options.noMore();
+			return false;
+		}
+		$.ajax(options.ajaxUrl, {
+			data: ajaxParams(), 
+			dataType: options.ajaxDataType, 
+			type: 'GET',
+			beforeSend: loadStart,
+			success: callbackAjax,
+			error: loadEnd
+		});
 	};
 
 	function Waterfall(elemId, settings){
-		var i;
+		var i, timeout;
 		for (i in settings) options[i] = settings[i];
+
+		wrapper = document.getElementById(elemId);
+		pageIndex = options.startPageIndex;
+		fixed = options.cols > 0;
+		load();
+
+		timeout = setInterval(reset, 300);
 	};
 
 	Waterfall.prototype.loadMore = load;
