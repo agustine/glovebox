@@ -35,26 +35,26 @@ var Waterfall = (function(){
 
 		}
 	};
-	var pageIndex = 0, loading = false, waterWidth, columns, waters, imgWidth, wrapper, minColumn = 0, noMore = false, fixed, wrapperWidth;
-	var log = (console && console.log) ? console.log : function(){};
+	var pageIndex = 0, loading = false, waterWidth, columns, waters = [], imgWidth, wrapper, minColumn = 0, noMore = false, fixed, wrapperWidth;
+	var log = (console && console.log) ? function(msg){ console.log(msg); } : function(msg){};
 
 	function calculateColumnsHeight() {
 		var minH = Math.min.apply({}, columns);
 		var maxH = Math.max.apply({}, columns);
 		var columnCount = columns.length;
-		var wrapperHeight = (maxH + whiteBottom);
+		var wrapperHeight = (maxH + options.whiteBottom);
 		for(var i = 0; i < columnCount; i++){
 			if(columns[i] === minH){
 				minColumn = i;
 				break;
 			} 
 		}
-		wrapper.css('height', wrapperHeight.toString() + 'px');
+		wrapper.style.height = wrapperHeight.toString() + 'px';
 	};
 
 	function renderWater(item, imageWidth, imageHeight){
 		var itemElem = document.createElement(options.waterBox);
-		var itemHeight = (imgWidth / imageWidth) * imageHeight + options.offsetV;
+		var itemHeight = Math.ceil(Math.ceil(imgWidth) * imageHeight / imageWidth) + options.offsetV;
 		var itemTop = columns[minColumn] + options.margin;
 		var itemLeft = (waterWidth + options.margin) * minColumn + options.margin;
 		itemElem.style.position = 'absolute';
@@ -64,7 +64,7 @@ var Waterfall = (function(){
 		itemElem.style.left = itemLeft + 'px';
 		itemElem.innerHTML = options.template(item);
 
-		this.wrapper.appendChild(itemElem);
+		wrapper.appendChild(itemElem);
 		columns[minColumn] += itemHeight + options.margin;
 
 		calculateColumnsHeight();
@@ -101,6 +101,7 @@ var Waterfall = (function(){
 
 	function loadComplete(res){
 		options.pageLoaded(res);
+		pageIndex++;
 		loadEnd();
 	};
 
@@ -132,9 +133,11 @@ var Waterfall = (function(){
 			img = new Image();
 
 			img.src = url;
+			$(img).data('data', item);
 			img.onload=function(){
-				thisRenderWater(item, this.width, this.height);
-				thisPushWater(item, this.width, this.height);
+				var imageData = $(this).data('data');
+				thisRenderWater(imageData, this.width, this.height);
+				thisPushWater(imageData, this.width, this.height);
 				done++;
 				(done === pageCount) && thisLoadComplete(res);	
 			};
@@ -163,9 +166,10 @@ var Waterfall = (function(){
 
 		wrapperWidth = wrapper.clientWidth;
 		if(!fixed){
-			cols = (wrapperWidth - options.margin) / options.minWidth
+			cols = (wrapperWidth - options.margin) / (options.minWidth + options.margin)
+			cols = Math.floor(cols);
 		}
-		waterWidth = (wrapperWidth - ((options.cols + 1) * options.margin)) / cols;
+		waterWidth = (wrapperWidth - ((cols + 1) * options.margin)) / cols;
 		imgWidth = waterWidth - options.offsetH;
 		resetColumns(cols);
 		minColumn = 0;
@@ -181,7 +185,7 @@ var Waterfall = (function(){
 	};
 
 	function ajaxParams(){
-		options.ajaxData[pageIndexName] = pageIndex;
+		options.ajaxData[options.pageIndexName] = pageIndex;
 		return options.ajaxData;
 	};
 
@@ -212,6 +216,7 @@ var Waterfall = (function(){
 		wrapper = document.getElementById(elemId);
 		pageIndex = options.startPageIndex;
 		fixed = options.cols > 0;
+		reset();
 		load();
 
 		timeout = setInterval(reset, 300);
