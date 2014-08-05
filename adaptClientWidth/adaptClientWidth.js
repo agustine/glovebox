@@ -3,6 +3,8 @@
  * adaptClientWidth480(); 适配到480像素宽度
  * adaptClientWidth320(); 适配到320像素宽度
  * 支持ie mobile
+ * 不支持ios 5
+ * android2下一些机型右边会有白边
  */
 
 var adaptClientWidth =  function(uiWidth){
