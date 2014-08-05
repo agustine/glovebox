@@ -92,7 +92,7 @@ var adaptClientWidth =  function(uiWidth){
   // 检查本地存储中是否有，viewport的值
   if(initialContent){ 
     resetViewport();
-    return;
+    // return;
   }
 
   // ua
@@ -100,6 +100,8 @@ var adaptClientWidth =  function(uiWidth){
 
   // 是否android设备
   isAndroid = (/android/gi).test(ua);
+  // 是否ios设备
+  isIos = (/ipad|iphone/gi).test(ua);
   // android版本
   androidVersion = isAndroid ? parseFloat((/Android[\/\s]+([\d\.]+)/).exec(navigator.userAgent)[1]) : 0;
 
@@ -127,8 +129,13 @@ var adaptClientWidth =  function(uiWidth){
 
   // 默认设置
   // iphone以及android版本4+原生浏览器
-  initialContent   = 'target-densitydpi=device-dpi, width=' + uiWidth + 'px, user-scalable=no'
+  initialContent   = 'target-densitydpi=device-dpi, width=' + uiWidth + 'px, user-scalable=no';
+
   resetViewport();
+  // ios设备不支持target-densitydpi 
+  if(isIos){
+    return;
+  }
 
   // 一些android版本4+原生浏览器也不支持默认设置
   // 比如红米上的默认原生浏览器就不支持
