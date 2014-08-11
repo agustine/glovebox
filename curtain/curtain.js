@@ -8,11 +8,11 @@ var Curtain = (function(){
 		this.offset = 0;
 		this.id = id || 'curtain';
 		this.img = document.getElementById(this.id);
-		urlNode = this.img.attributes['url'];
+
 		if(!this.img){
 			return false;
 		}
-
+        urlNode = this.img.attributes['url'];
 		this.time = time || 3000;
 		this.url = urlNode ? urlNode.nodeValue : '';
 		this.setStyle = function(styles){
@@ -65,6 +65,9 @@ var Curtain = (function(){
 	}
 
 	Curtain.prototype.run = function(){
+        if(!this.img){
+            return;
+        }
 		var curtain = this;
 		var transform = function(){
 			curtain.transform();
@@ -75,6 +78,15 @@ var Curtain = (function(){
 		this.timeout = setInterval(transform, this.time);
 		this.isRun = true;
 	};
+
+    Curtain.prototype.stop = function(){
+        if(!this.img){
+            return;
+        }
+
+        clearInterval(this.timeout);
+        this.isRun = false;
+    };
 
 	return Curtain;
 })();
