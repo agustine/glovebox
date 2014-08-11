@@ -2,7 +2,7 @@
  * jQuery移动端浏览器划屏监听插件
  *
  * $(selector)
- *   .suppurtSlide(options)
+ *   .supportSlide(options)
  *   .on('slideUp', callbackSlideUp)
  *   .on('slideDown', callbackSlideDown)
  *   .on('slideLeft', callbackSlideLeft)
@@ -105,7 +105,7 @@
 //    }
 
     $.fn.extend({
-        suppurtSlide: function (settings) {
+        supportSlide: function (settings) {
             'use strict';
             // 获取options
             options = $.extend(defaultOptions, settings);
