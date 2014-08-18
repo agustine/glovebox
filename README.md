@@ -3,6 +3,16 @@
 代码杂物箱，一些之前写的前端jquery插件，组件...
 
 
+## adaptClientWidth
+
+调整移动端页面宽度（320px or 480px），利用viewport实现
+以便满足设计对页面的像素级要求，兼容ie mobile 10
+
+    // 适配到480px宽度， ios5 android2不兼容
+    adaptClientWidth480(); 
+    // 适配到320px宽度， 部分android2机型下页面右侧会有白边
+    adaptClientWidth320(); 
+
 ## slideListener
 
 为触屏设备浏览器添加划屏监听的jquery插件
