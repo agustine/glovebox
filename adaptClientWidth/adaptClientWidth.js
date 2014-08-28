@@ -26,7 +26,8 @@ var adaptClientWidth = function (uiWidth) {
         isAndroid,
         androidVersion,
         isSurport,
-        isIos;
+        isIos,
+        isChrome;
     // 由于android 2.2 2.3的bug，
     // 目前仅支持320及480的适配，默认使用480
     uiWidth = uiWidth === 320 ? 320 : 480;
@@ -106,7 +107,8 @@ var adaptClientWidth = function (uiWidth) {
     // 是否android设备
     isAndroid = (/android/gi).test(ua);
 //    // 是否ios设备
-//    isIos = (/ipad|iphone/gi).test(ua);
+    isIos = (/ipad|iphone/gi).test(ua);
+    isChrome = (/chrome/gi).test(ua);
     // android版本
     androidVersion = isAndroid ? parseFloat((/Android[\/\s]+([\d\.]+)/).exec(navigator.userAgent)[1]) : 0;
 
@@ -132,20 +134,17 @@ var adaptClientWidth = function (uiWidth) {
         return;
     }
 
-//    // ios设备不支持target-densitydpi
-//    if (isIos) {
-//        initialContent = 'width=480, user-scalable=no, target-densitydpi=device-dpi';
-//        resetViewport();
-//        alert(initialContent);
-//        return;
-//    }
-
     // 默认设置
     // iphone以及android版本4+原生浏览器
     initialContent = 'target-densitydpi=device-dpi, width=' + uiWidth + 'px, user-scalable=no';
 
     resetViewport();
 
+    // ios设备不支持target-densitydpi
+    // chrome无需做检查
+    if(isIos || isChrome){
+        return;
+    }
     // 一些android版本4+原生浏览器也不支持默认设置
     // 比如红米上的默认原生浏览器就不支持
     // 但是像微信等app中调用的webview对ua的重写导致ua中没有设备信息，

@@ -343,6 +343,7 @@ iScroll.prototype = {
 			point = hasTouch ? e.touches[0] : e,
 			matrix, x, y,
 			c1, c2;
+
 		if (!that.enabled) return;
 
 		if (that.options.onBeforeScrollStart) that.options.onBeforeScrollStart.call(that, e);
@@ -403,9 +404,9 @@ iScroll.prototype = {
 
 		if (that.options.onScrollStart) that.options.onScrollStart.call(that, e);
 
-		that._bind(MOVE_EV, window);
-		that._bind(END_EV, window);
-		that._bind(CANCEL_EV, window);
+		that._bind(MOVE_EV, that.wrapper);
+		that._bind(END_EV, that.wrapper);
+		that._bind(CANCEL_EV, that.wrapper);
 	},
 	
 	_move: function (e) {
@@ -435,7 +436,7 @@ iScroll.prototype = {
 
 			that.lastScale = scale / this.scale;
 
-			newX = this.originX - this.originX * that.lastScale + this.x;
+			newX = this.originX - this.originX * that.lastScale + this.x,
 			newY = this.originY - this.originY * that.lastScale + this.y;
 
 			this.scroller.style[transform] = 'translate(' + newX + 'px,' + newY + 'px) scale(' + scale + ')' + translateZ;
@@ -489,11 +490,7 @@ iScroll.prototype = {
 		if (that.options.onScrollMove) that.options.onScrollMove.call(that, e);
 	},
 	
-	_end: function (e) {  
-		/* 
-        if(this.swipe){
-            return;
-        }*/
+	_end: function (e) {
 		if (hasTouch && e.touches.length !== 0) return;
 
 		var that = this,
@@ -622,7 +619,7 @@ iScroll.prototype = {
 			return;
 		}
 
-		that._resetPos(200);
+		that._resetPos(600);
 		if (that.options.onTouchEnd) that.options.onTouchEnd.call(that, e);
 	},
 	
