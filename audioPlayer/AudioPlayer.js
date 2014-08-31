@@ -56,15 +56,15 @@ AudioPlayer = (function() {
     }
   }
 
-  // AudioPlayer.prototype.isPaused = function(){
-  //   if(!player.currentAudio){
-  //     return true;
-  //   }
-  //   return player.currentAudio.paused;
-  // }
+  AudioPlayer.prototype.isPaused = function(){
+     if(!player.currentAudio){
+       return true;
+     }
+     return player.currentAudio.paused;
+  }
 
 
-  AudioPlayer.prototype.switch = function() {
+  AudioPlayer.prototype.doSwitch = function() {
     'use strict';
 
     if(this.currect === -1){
