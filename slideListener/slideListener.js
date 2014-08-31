@@ -18,8 +18,8 @@
 (function ($) {
     'use strict';
     // 2次有效划屏判定锁
-    var lock = false;
-    var options;
+    var lock = false,
+        options;
     // 默认设定
     var defaultOptions = {
         pixel: 30, // 划越像素距离最小判定，默认30像素
