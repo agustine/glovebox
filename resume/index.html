@@ -386,6 +386,17 @@
             <tr>
               <td class="project-sub-title" valign="top">项目描述:</td>
               <td class="item-content">
+                该项目初期依然沿用老的方案backbonejs + requirejs + gruntjs完成的第一版开发。
+                随着项目体量扩大逐渐出现了一些问题，过程中也尝试进行了一些优化。
+                比如在团队开发下css命名冲突的问题，以为了加强ccs rules的attachment的效率，引入的bem命名规范，并使用scss预编译器。
+                为了解决模版中复用的问题，编写了一个grunt-jst插件使underscore的模版支持嵌套。
+                基于backbone的view编写对于list和detail两类视图的基类，简化这两类视图的开发。
+                model按指定的唯一属性做单例，使全局的model对象在更新时保持同步。
+                但是最总发现一些问题无法解决：
+                尝试在backbone中实现动态化的组件，但是效果不好，反而是项目更复杂，增加了维护成本。
+                underscore的模版渲染导致视图会有瞬间的闪屏，渲染效率不高，体验不理想。
+                基于这些考虑
+
                 独立完成项目的结构设计，打包方案，工作流工具配置及插件开发，前端开发内容。
                 <br/> 早期使用backbone框架，requirejs作为模块加载，sass预编译，grunt构建设计的单页应用。
                 <br/> 在进入公司的初期，公司的主要产品是一款名为联连免费WiFi的客户端应用，应用中的个人中心、积分商城、勋章成就模块等部分模块，以Web单页应用的方式开发，并通过WebView嵌入到应用中(重混)。
